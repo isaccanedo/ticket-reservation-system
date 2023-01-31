@@ -1,0 +1,73 @@
+<div class="page-header">
+    <h1>{{event.displayName}} 
+    	<a class="btn btn-default visible-xs-inline visible-sm-inline" data-ng-if="isInternal(event)" data-ui-sref="events.single.configuration({eventName: event.shortName})"><i class="fa fa-wrench"></i><span class="sr-only"> settings</span></a>
+    	<button type="button" ng-click="openDeleteWarning(event)" class="btn btn-danger visible-xs-inline visible-sm-inline" ng-if="isInternal(event)"><i class="fa fa-trash"></i> Delete</button>
+	</h1>
+    <h4 class="text-muted">{{event.shortDescription}}</h4>
+    <div data-ng-if="isInternal(event)" class="visible-xs visible-sm">
+        <span><button class="btn btn-primary" type="button" data-ng-click="openFieldSelectionModal()" ><i class="fa fa-download"></i> download attendees' data</button></span>
+        <span><a class="btn btn-warning" data-ui-sref="events.single.compose-custom-message({eventName: event.shortName})"><i class="fa fa-envelope"></i> send a message to attendees</a></span>
+        <waiting-queue-display-counter data-event="event"></waiting-queue-display-counter>
+        <span><a class="btn btn-warning" data-ng-click="downloadSponsorsScan()" ><i class="fa fa-download"></i> download sponsors scan</a></span>
+        <span><a class="btn btn-default" data-ui-sref="events.single.email-log({eventName:event.shortName})"><i class="fa fa-paper-plane-o"></i> view sent messages</a></span>
+        <span><a class="btn btn-default" data-ui-sref="events.single.plugin-log({eventName:event.shortName})"><i class="fa fa-plug"></i> view Plugins log</a></span>
+    </div>
+</div>
+<div class="page-header"><h2>Location and Date</h2></div>
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <div class="form-group">
+            <label>Organized by</label>
+            <p class="form-control-static">{{organization.name}} &lt;{{organization.email}}&gt;</p>
+            <label>Website URL</label>
+            <p class="form-control-static"><a href="{{event.websiteUrl}}" target="_blank">{{event.websiteUrl}}</a></p>
+
+            <div data-ng-if="!isInternal(event)">
+                <label>External URL</label>
+                <p class="form-control-static"><a href="{{event.externalUrl}}" target="_blank">{{event.externalUrl}}</a></p>
+            </div>
+
+            <div data-ng-if="isInternal(event)">
+                <label>Terms and conditions URL</label>
+                <p class="form-control-static"><a href="{{event.termsAndConditionsUrl}}" target="_blank">{{event.termsAndConditionsUrl}}</a></p>
+            </div>
+
+            <label data-ng-if="event.fileBlobIdIsPresent">Event image</label>
+            <p data-ng-if="event.fileBlobIdIsPresent"><img data-ng-src="/file/{{event.fileBlobId}}" class="img-responsive"></p>
+
+            <label data-ng-if="!event.fileBlobIdIsPresent">Image URL</label>
+            <p  data-ng-if="!event.fileBlobIdIsPresent" class="form-control-static"><a href="{{event.imageUrl}}" target="_blank">{{event.imageUrl}}</a></p>
+
+            <label>Location</label>
+            <p class="form-control-static">{{event.location}}</p>
+
+            <div data-ng-if="isInternal(event)">
+                <label>Languages</label>
+                <p class="form-control-static" data-ng-repeat="cl in event.contentLanguages">
+                    - {{cl.displayLanguage}}
+                </p>
+
+                <label>Description</label>
+                <div></div>
+                <div data-ng-repeat="cl in event.contentLanguages">
+                    <p class="form-control-static">- {{cl.displayLanguage}}: <display-commonmark-preview text="event.description[cl.locale]"></display-commonmark-preview></p>
+                    <pre class="white form-control-static">{{event.description[cl.locale]}}</pre>
+                </div>
+            </div>
+
+            <label>Start Date/Time</label>
+            <p class="form-control-static">{{event.formattedBegin | formatDate}}</p>
+
+            <label>End Date/Time</label>
+            <p class="form-control-static">{{event.formattedEnd | formatDate}}</p>
+
+            <label>Time Zone</label>
+            <p class="form-control-static">{{event.timeZone}}</p>
+
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <i class="fa fa-cog fa-spin fa-3x" data-ng-if="loadingMap"></i>
+        <img data-ng-if="event.geolocation && !loadingMap" data-ng-src="{{event.geolocation.mapUrl}}" alt="{{event.location}}" class="img-responsive" />
+    </div>
+</div>
